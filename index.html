@@ -7,23 +7,37 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#0d0f14;color:#e8ecf4;font-family:Arial,sans-serif;font-size:14px;}
+
+/* PROYECTOS */
+#pantalla-proy{padding:0;}
+#pantalla-check{display:none;}
+.ph{background:#161a22;border-bottom:1px solid #2a3044;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.ph-title{font-size:20px;font-weight:900;color:#00c896;}
+.pl{max-width:680px;margin:24px auto;padding:0 16px;}
+
+/* CHECKLIST HEADER */
 header{background:#161a22;border-bottom:1px solid #2a3044;padding:10px 16px;position:sticky;top:0;z-index:100;}
-.row1{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
-.row1 input{background:#0d0f14;border:1px solid #2a3044;color:#e8ecf4;padding:6px 10px;border-radius:5px;font-size:12px;flex:1;min-width:120px;outline:none;}
-.row1 input:focus{border-color:#00c896;}
+.ht{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.btn-back{background:none;border:1px solid #2a3044;color:#6b7a99;padding:4px 10px;border-radius:5px;cursor:pointer;font-size:12px;}
+.btn-back:hover{color:#e8ecf4;border-color:#e8ecf4;}
+.hn{font-size:15px;font-weight:900;color:#00c896;flex:1;}
+.hs{font-size:11px;font-family:monospace;color:#6b7a99;}
 .row2{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
 .jb{padding:4px 10px;border-radius:20px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;}
 .jb.on{background:#00c896;color:#0d0f14;border-color:#00c896;}
 .ab{padding:5px 12px;border-radius:5px;border:none;cursor:pointer;font-size:12px;font-weight:600;}
-.ab-g{background:#161a22;color:#00c896;border:1px solid #00c896;}
 .ab-e{background:#00c896;color:#0d0f14;}
 .ab-r{background:#161a22;color:#6b7a99;border:1px solid #2a3044;}
 .stat{font-size:12px;font-weight:600;font-family:monospace;color:#00c896;margin-left:auto;}
+
 main{padding:12px 16px 40px;max-width:1000px;margin:0 auto;}
 table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;overflow:hidden;}
+
 .mb{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .mb.on{display:flex;}
 .md{background:#161a22;border:1px solid #2a3044;border-radius:12px;padding:20px;max-width:480px;width:95%;}
+.md input{width:100%;background:#0d0f14;border:1px solid #2a3044;color:#e8ecf4;padding:7px 10px;border-radius:5px;font-size:13px;outline:none;margin-bottom:8px;}
+.md input:focus{border-color:#00c896;}
 .fg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;max-height:320px;overflow-y:auto;margin-top:10px;}
 .ft{cursor:pointer;border-radius:6px;overflow:hidden;background:#0d0f14;border:1px solid #2a3044;}
 .ft img{width:100%;height:90px;object-fit:cover;display:block;}
@@ -32,27 +46,37 @@ table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;o
 </style>
 </head>
 <body>
-<header>
-  <div class="row1">
-    <input id="ip" placeholder="Nombre del proyecto..." />
-    <input id="ii" placeholder="Instalacion / Referencia..." style="max-width:200px"/>
-    <input id="if" type="date" style="max-width:140px"/>
+
+<!-- PANTALLA PROYECTOS -->
+<div id="pantalla-proy">
+  <div class="ph">
+    <span class="ph-title">CHECK DE VALIDACION</span>
+    <button class="ab ab-e" onclick="abrirModalNuevo()">+ Nuevo proyecto</button>
   </div>
-  <div class="row2">
-    <button class="jb on" onclick="fil('ALL',this)">Todos</button>
-    <button class="jb" onclick="fil('CDC',this)">CDC</button>
-    <button class="jb" onclick="fil('ATFE',this)">ATFE</button>
-    <button class="jb" onclick="fil('ATFMR',this)">ATFMR</button>
-    <button class="jb" onclick="fil('ATMP',this)">ATMP</button>
-    <button class="jb" onclick="fil('ATMP+6',this)">ATMP+6</button>
-    <span class="stat" id="st">0 / 141 OK</span>
-    <button class="ab ab-g" onclick="cargar()">Cargar</button>
-    <button class="ab ab-g" onclick="guardar()">Guardar</button>
-    <button class="ab ab-e" onclick="exportPDF()">Exportar PDF</button>
-    <button class="ab ab-r" onclick="document.getElementById('mr').classList.add('on')">Reiniciar</button>
-  </div>
-</header>
-<main><table id="tb">
+  <div class="pl" id="proy-list"><p style="color:#6b7a99;text-align:center;padding:40px;">Cargando...</p></div>
+</div>
+
+<!-- PANTALLA CHECKLIST -->
+<div id="pantalla-check">
+  <header>
+    <div class="ht">
+      <button class="btn-back" onclick="volverProyectos()">&#8592; Proyectos</button>
+      <span class="hn" id="h-nombre"></span>
+      <span class="hs" id="h-sync">Listo</span>
+    </div>
+    <div class="row2">
+      <button class="jb on" onclick="fil('ALL',this)">Todos</button>
+      <button class="jb" onclick="fil('CDC',this)">CDC</button>
+      <button class="jb" onclick="fil('ATFE',this)">ATFE</button>
+      <button class="jb" onclick="fil('ATFMR',this)">ATFMR</button>
+      <button class="jb" onclick="fil('ATMP',this)">ATMP</button>
+      <button class="jb" onclick="fil('ATMP+6',this)">ATMP+6</button>
+      <span class="stat" id="st">0 OK</span>
+      <button class="ab ab-e" onclick="exportPDF()">Exportar PDF</button>
+      <button class="ab ab-r" onclick="document.getElementById('mr').classList.add('on')">Reiniciar</button>
+    </div>
+  </header>
+  <main><table id="tb">
 <tr class="chr" data-cat="Planning" onclick="toggleCat(this)"><td colspan="3" style="padding:10px 14px;background:#1e2330;cursor:pointer;border-bottom:1px solid #2a3044;"><div style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:#60a5fa;display:inline-block;flex-shrink:0;"></span><strong style="font-size:13px;color:#e8ecf4;flex:1;">Planning</strong><span class="cprog" id="cp-Planning" style="font-size:11px;color:#6b7a99;font-family:monospace;"></span><button onclick="event.stopPropagation();openFotos('Planning','Planning')" id="fb-Planning" style="padding:3px 10px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;">Fotos</button><span style="font-size:11px;color:#6b7a99;">&#9660;</span></div></td></tr>
 <tr class="ir" data-idx="0" data-jalon="ATFE" data-cat="Planning"><td style="padding:8px 14px 8px 28px;border-bottom:1px solid #1e2330;width:28px;color:#6b7a99;font-size:11px;font-family:monospace;vertical-align:top;padding-top:10px;">1</td><td style="padding:8px 8px 8px 0;border-bottom:1px solid #1e2330;vertical-align:top;"><span style="font-size:13px;color:#e8ecf4;line-height:1.5;">Planning trabajos existe, coherente y panelizado</span><br><span style="display:inline-block;margin-top:4px;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:monospace;background:rgba(96,165,250,0.2);color:#60a5fa;">ATFE</span></td><td style="padding:8px;border-bottom:1px solid #1e2330;white-space:nowrap;vertical-align:top;"><button id="ok-0" onclick="mark(0,'ok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">OK</button><button id="nok-0" onclick="mark(0,'nok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">NOK</button><button id="na-0" onclick="mark(0,'na')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;">N/A</button></td></tr>
 <tr class="ir" data-idx="1" data-jalon="ATFMR" data-cat="Planning"><td style="padding:8px 14px 8px 28px;border-bottom:1px solid #1e2330;width:28px;color:#6b7a99;font-size:11px;font-family:monospace;vertical-align:top;padding-top:10px;">2</td><td style="padding:8px 8px 8px 0;border-bottom:1px solid #1e2330;vertical-align:top;"><span style="font-size:13px;color:#e8ecf4;line-height:1.5;">Verificacion de que los Materiales Criticos estan recepcionados MINIMO 2 semanas antes de Integracion</span><br><span style="display:inline-block;margin-top:4px;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:monospace;background:rgba(251,191,36,0.2);color:#fbbf24;">ATFMR</span></td><td style="padding:8px;border-bottom:1px solid #1e2330;white-space:nowrap;vertical-align:top;"><button id="ok-1" onclick="mark(1,'ok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">OK</button><button id="nok-1" onclick="mark(1,'nok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">NOK</button><button id="na-1" onclick="mark(1,'na')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;">N/A</button></td></tr>
@@ -208,11 +232,27 @@ table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;o
 <tr class="ir" data-idx="140" data-jalon="CDC" data-cat="Saov"><td style="padding:8px 14px 8px 28px;border-bottom:1px solid #1e2330;width:28px;color:#6b7a99;font-size:11px;font-family:monospace;vertical-align:top;padding-top:10px;">9</td><td style="padding:8px 8px 8px 0;border-bottom:1px solid #1e2330;vertical-align:top;"><span style="font-size:13px;color:#e8ecf4;line-height:1.5;">Capitalizar gestion maximo numero de repeticiones en 1 apriete</span><br><span style="display:inline-block;margin-top:4px;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:monospace;background:rgba(167,139,250,0.2);color:#a78bfa;">CDC</span></td><td style="padding:8px;border-bottom:1px solid #1e2330;white-space:nowrap;vertical-align:top;"><button id="ok-140" onclick="mark(140,'ok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">OK</button><button id="nok-140" onclick="mark(140,'nok')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;margin-right:3px;">NOK</button><button id="na-140" onclick="mark(140,'na')" style="padding:4px 8px;border-radius:4px;border:1px solid #2a3044;background:#0d0f14;color:#6b7a99;cursor:pointer;font-size:11px;font-weight:600;">N/A</button></td></tr>
 
 </table></main>
+</div>
 
+<!-- MODAL NUEVO PROYECTO -->
+<div class="mb" id="m-nuevo">
+  <div class="md">
+    <h3 style="margin-bottom:14px;font-size:15px;">Nuevo proyecto</h3>
+    <input id="np-n" placeholder="Nombre del proyecto *" />
+    <input id="np-i" placeholder="Instalacion / Referencia" />
+    <input id="np-f" type="date" />
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="ab ab-r" onclick="document.getElementById('m-nuevo').classList.remove('on')">Cancelar</button>
+      <button class="ab ab-e" onclick="crearProyecto()">Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RESET -->
 <div class="mb" id="mr">
   <div class="md">
-    <h3 style="margin-bottom:12px;">Reiniciar checklist?</h3>
-    <p style="color:#6b7a99;font-size:12px;margin-bottom:16px;">Se borraran todos los estados marcados.</p>
+    <h3 style="margin-bottom:10px;">Reiniciar checklist?</h3>
+    <p style="color:#6b7a99;font-size:12px;margin-bottom:16px;">Se borraran todos los estados de este proyecto.</p>
     <div style="display:flex;gap:8px;">
       <button class="ab ab-r" onclick="document.getElementById('mr').classList.remove('on')">Cancelar</button>
       <button class="ab" style="background:#ef4444;color:#fff;" onclick="reiniciar()">Reiniciar</button>
@@ -220,11 +260,12 @@ table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;o
   </div>
 </div>
 
+<!-- MODAL FOTOS -->
 <div class="mb" id="mf">
   <div class="md">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <strong id="ft-title" style="font-size:14px;">Fotos</strong>
-      <button onclick="document.getElementById('mf').classList.remove('on')" style="background:none;border:none;color:#6b7a99;font-size:20px;cursor:pointer;">x</button>
+      <button onclick="document.getElementById('mf').classList.remove('on')" style="background:none;border:none;color:#6b7a99;font-size:20px;cursor:pointer;line-height:1;">x</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <label style="padding:7px 14px;border-radius:5px;background:#00c896;color:#0d0f14;font-size:12px;font-weight:700;cursor:pointer;">
@@ -239,6 +280,7 @@ table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;o
   </div>
 </div>
 
+<!-- MODAL ZOOM -->
 <div class="mb" id="mz">
   <div style="text-align:center;">
     <img id="zi" style="max-width:90vw;max-height:80vh;border-radius:8px;" src="" alt="">
@@ -252,23 +294,189 @@ table{width:100%;border-collapse:collapse;background:#161a22;border-radius:8px;o
 <div class="toast" id="toast"></div>
 
 <script>
+var SURL = "https://wyeisgubtqzfbiwialoz.supabase.co";
+var SKEY = "sb_publishable_BwRJncDvuAp1rl9xkhYafw_j2DKSIok";
+
 var IDX = {"0": "Planning|1", "1": "Planning|2", "2": "Planning|3", "3": "Recursos Humanos|1", "4": "Recursos Humanos|2", "5": "Recursos Humanos|3", "6": "Recursos Humanos|4", "7": "Recursos Humanos|5", "8": "Mecanica|1", "9": "Mecanica|2", "10": "Mecanica|3", "11": "Mecanica|4", "12": "Mecanica|5", "13": "Mecanica|6", "14": "Mecanica|7", "15": "Mecanica|8", "16": "Mecanica|9", "17": "Mecanica|10", "18": "Mecanica|11", "19": "Mecanica|12", "20": "Mecanica|13", "21": "Mecanica|14", "22": "Mecanica|15", "23": "Mecanica|16", "24": "Mecanica|17", "25": "Mecanica|18", "26": "Mecanica|19", "27": "Mecanica|20", "28": "Mecanica|21", "29": "Mecanica|22", "30": "Robotica|1", "31": "Robotica|2", "32": "Robotica|3", "33": "Robotica|4", "34": "Robotica|5", "35": "Robotica|6", "36": "Robotica|7", "37": "Robotica|8", "38": "Automatismos|1", "39": "Automatismos|2", "40": "Automatismos|3", "41": "Automatismos|4", "42": "Automatismos|5", "43": "Automatismos|6", "44": "Automatismos|7", "45": "Automatismos|8", "46": "Automatismos|9", "47": "Automatismos|10", "48": "Automatismos|11", "49": "Automatismos|12", "50": "Automatismos|13", "51": "Automatismos|14", "52": "Automatismos|15", "53": "Automatismos|16", "54": "Automatismos|17", "55": "Automatismos|18", "56": "Automatismos|19", "57": "Automatismos|20", "58": "Automatismos|21", "59": "Automatismos|22", "60": "Automatismos|23", "61": "Automatismos|24", "62": "Automatismos|25", "63": "Automatismos|26", "64": "Automatismos|27", "65": "Automatismos|28", "66": "Automatismos|29", "67": "Automatismos|30", "68": "Automatismos|31", "69": "Automatismos|32", "70": "Automatismos|33", "71": "Automatismos|34", "72": "Automatismos|35", "73": "Automatismos|36", "74": "Automatismos|37", "75": "Automatismos|38", "76": "Automatismos|39", "77": "Automatismos|40", "78": "Automatismos|41", "79": "Automatismos|42", "80": "Neumatica|1", "81": "Neumatica|2", "82": "Neumatica|3", "83": "Neumatica|4", "84": "Neumatica|5", "85": "Neumatica|6", "86": "Neumatica|7", "87": "Documentacion|1", "88": "Documentacion|2", "89": "Documentacion|3", "90": "Documentacion|4", "91": "Documentacion|5", "92": "Documentacion|6", "93": "Documentacion|7", "94": "Documentacion|8", "95": "Documentacion|9", "96": "Producto|1", "97": "Producto|2", "98": "Producto|3", "99": "Producto|4", "100": "Producto|5", "101": "Fiabilidad|1", "102": "Fiabilidad|2", "103": "Fiabilidad|3", "104": "Fiabilidad|4", "105": "Fiabilidad|5", "106": "Fiabilidad|6", "107": "Fiabilidad|7", "108": "Fiabilidad|8", "109": "AGV|1", "110": "AGV|2", "111": "AGV|3", "112": "AGV|4", "113": "AGV|5", "114": "AGV|6", "115": "AGV|7", "116": "AGV|8", "117": "AGV|9", "118": "AGV|10", "119": "AGV|11", "120": "Seguridad|1", "121": "Seguridad|2", "122": "Seguridad|3", "123": "Seguridad|4", "124": "Seguridad|5", "125": "Seguridad|6", "126": "Seguridad|7", "127": "Seguridad|8", "128": "Seguridad|9", "129": "Seguridad|10", "130": "Seguridad|11", "131": "Seguridad|12", "132": "Saov|1", "133": "Saov|2", "134": "Saov|3", "135": "Saov|4", "136": "Saov|5", "137": "Saov|6", "138": "Saov|7", "139": "Saov|8", "140": "Saov|9"};
+
 var ST = {};
 var PH = {};
 var CJ = 'ALL';
 var CC = {};
 var curCat = null;
 var curZoom = null;
+var PROYECTO_ID = null;
 
+// ---- SUPABASE ----
+function supa(path, method, body) {
+  var opts = {
+    method: method || 'GET',
+    headers: {
+      'apikey': SKEY,
+      'Authorization': 'Bearer ' + SKEY,
+      'Content-Type': 'application/json',
+      'Prefer': (method === 'POST') ? 'return=representation' : ''
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  return fetch(SURL + '/rest/v1/' + path, opts).then(function(r) {
+    if (r.status === 204 || r.status === 200 && r.headers.get('content-length') === '0') return [];
+    return r.json();
+  });
+}
+
+// ---- PROYECTOS ----
+function initApp() {
+  // Show project selector on load
+  document.getElementById('pantalla-proy').style.display = 'block';
+  document.getElementById('pantalla-check').style.display = 'none';
+  cargarProyectos();
+}
+
+function cargarProyectos() {
+  document.getElementById('proy-list').innerHTML = '<p style="color:#6b7a99;text-align:center;padding:30px;">Cargando...</p>';
+  supa('proyectos?select=*&order=created_at.desc').then(function(data) {
+    renderProyectos(Array.isArray(data) ? data : []);
+  }).catch(function(e) {
+    document.getElementById('proy-list').innerHTML = '<p style="color:#ef4444;text-align:center;padding:30px;">Error al conectar con Supabase</p>';
+  });
+}
+
+function renderProyectos(lista) {
+  var c = document.getElementById('proy-list');
+  if (lista.length === 0) {
+    c.innerHTML = '<p style="color:#6b7a99;text-align:center;padding:40px;">No hay proyectos. Crea uno nuevo.</p>';
+    return;
+  }
+  c.innerHTML = '';
+  lista.forEach(function(p) {
+    var d = document.createElement('div');
+    d.style.cssText = 'background:#161a22;border:1px solid #2a3044;border-radius:8px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;cursor:pointer;';
+    d.innerHTML = '<div style="flex:1;" onclick="abrirProyecto('' + p.id + '','' + esc(p.nombre) + '','' + esc(p.instalacion||'') + '')">'
+      + '<div style="font-size:14px;font-weight:700;color:#e8ecf4;">' + esc(p.nombre) + '</div>'
+      + '<div style="font-size:11px;color:#6b7a99;margin-top:2px;">' + (p.instalacion||'') + (p.fecha ? ' | ' + p.fecha : '') + '</div>'
+      + '</div>'
+      + '<button onclick="event.stopPropagation();borrarProy('' + p.id + '','' + esc(p.nombre) + '')" style="background:none;border:none;color:#6b7a99;cursor:pointer;font-size:16px;padding:4px 8px;">x</button>';
+    c.appendChild(d);
+  });
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function abrirModalNuevo() {
+  document.getElementById('np-n').value='';
+  document.getElementById('np-i').value='';
+  document.getElementById('np-f').value='';
+  document.getElementById('m-nuevo').classList.add('on');
+  setTimeout(function(){ document.getElementById('np-n').focus(); }, 100);
+}
+
+function crearProyecto() {
+  var nombre = document.getElementById('np-n').value.trim();
+  if (!nombre) { toast('Escribe un nombre'); return; }
+  supa('proyectos', 'POST', {
+    nombre: nombre,
+    instalacion: document.getElementById('np-i').value.trim(),
+    fecha: document.getElementById('np-f').value
+  }).then(function(data) {
+    document.getElementById('m-nuevo').classList.remove('on');
+    var p = Array.isArray(data) ? data[0] : data;
+    abrirProyecto(p.id, p.nombre, p.instalacion||'');
+  }).catch(function(){ toast('Error al crear proyecto'); });
+}
+
+function borrarProy(id, nombre) {
+  if (!confirm('Borrar proyecto "' + nombre + '"?')) return;
+  supa('proyectos?id=eq.' + id, 'DELETE').then(function() {
+    toast('Proyecto borrado');
+    cargarProyectos();
+  });
+}
+
+function abrirProyecto(id, nombre, instalacion) {
+  PROYECTO_ID = id;
+  ST = {}; PH = {};
+  document.getElementById('h-nombre').textContent = nombre + (instalacion ? ' - ' + instalacion : '');
+  document.getElementById('pantalla-proy').style.display = 'none';
+  document.getElementById('pantalla-check').style.display = 'block';
+  setSync('Cargando...', '');
+
+  // Reset buttons
+  var rows = document.querySelectorAll('.ir');
+  for (var i=0;i<rows.length;i++) paint(rows[i].getAttribute('data-idx'));
+
+  // Load states
+  supa('checklist_states?proyecto_id=eq.' + id + '&select=*').then(function(data) {
+    if (Array.isArray(data)) {
+      data.forEach(function(row) {
+        ST[row.item_idx] = { val: row.status, dbid: row.id };
+      });
+      var ks = Object.keys(ST);
+      for (var i=0;i<ks.length;i++) paint(ks[i]);
+    }
+    setSync('Listo', 'ok');
+    updStats();
+  });
+
+  // Load photos
+  supa('fotos?proyecto_id=eq.' + id + '&select=*').then(function(data) {
+    if (Array.isArray(data)) {
+      data.forEach(function(row) {
+        if (!PH[row.categoria]) PH[row.categoria] = [];
+        PH[row.categoria].push({ id: row.id, url: row.data_url });
+      });
+      updFotoBtns();
+    }
+  });
+}
+
+function volverProyectos() {
+  PROYECTO_ID = null; ST = {}; PH = {};
+  document.getElementById('pantalla-check').style.display = 'none';
+  document.getElementById('pantalla-proy').style.display = 'block';
+  cargarProyectos();
+}
+
+function setSync(msg, cls) {
+  var el = document.getElementById('h-sync');
+  el.textContent = msg;
+  el.style.color = cls==='ok' ? '#00c896' : cls==='err' ? '#ef4444' : '#fbbf24';
+}
+
+// ---- CHECKLIST ----
 function mark(idx, val) {
-  var prev = ST[idx] || null;
-  ST[idx] = (prev === val) ? null : val;
+  if (!PROYECTO_ID) return;
+  var prev = ST[idx] ? ST[idx].val : null;
+  var newVal = (prev === val) ? null : val;
+  if (!ST[idx]) ST[idx] = {};
+  ST[idx].val = newVal;
   paint(idx);
   updStats();
+  guardarEstado(idx, newVal);
+}
+
+function guardarEstado(idx, val) {
+  setSync('Guardando...', 'warn');
+  var existing = ST[idx] && ST[idx].dbid;
+  if (existing) {
+    supa('checklist_states?id=eq.' + ST[idx].dbid, 'PATCH', { status: val, updated_at: new Date().toISOString() })
+      .then(function(){ setSync('Guardado', 'ok'); })
+      .catch(function(){ setSync('Error', 'err'); });
+  } else {
+    supa('checklist_states', 'POST', { proyecto_id: PROYECTO_ID, item_idx: String(idx), status: val })
+      .then(function(data) {
+        var row = Array.isArray(data) ? data[0] : data;
+        if (row && row.id) ST[idx].dbid = row.id;
+        setSync('Guardado', 'ok');
+      })
+      .catch(function(){ setSync('Error', 'err'); });
+  }
 }
 
 function paint(idx) {
-  var s = ST[idx] || null;
+  var s = ST[idx] ? ST[idx].val : null;
   var ok = document.getElementById('ok-' + idx);
   var nok = document.getElementById('nok-' + idx);
   var na = document.getElementById('na-' + idx);
@@ -286,11 +494,12 @@ function paint(idx) {
 
 function updStats() {
   var rows = document.querySelectorAll('.ir');
-  var tot = 0, ok = 0;
+  var tot=0, ok=0;
   for (var i=0;i<rows.length;i++) {
-    if (rows[i].style.display !== 'none') {
+    if (rows[i].style.display!=='none') {
       tot++;
-      if (ST[rows[i].getAttribute('data-idx')] === 'ok') ok++;
+      var s = ST[rows[i].getAttribute('data-idx')];
+      if (s && s.val==='ok') ok++;
     }
   }
   document.getElementById('st').textContent = ok + ' / ' + tot + ' OK';
@@ -300,7 +509,11 @@ function updStats() {
     var cr = document.querySelectorAll('.ir[data-cat="'+cid+'"]');
     var ct=0,co=0;
     for (var r=0;r<cr.length;r++) {
-      if (cr[r].style.display!=='none') { ct++; if(ST[cr[r].getAttribute('data-idx')]==='ok') co++; }
+      if (cr[r].style.display!=='none') {
+        ct++;
+        var sk = ST[cr[r].getAttribute('data-idx')];
+        if (sk && sk.val==='ok') co++;
+      }
     }
     var pe = document.getElementById('cp-'+cid);
     if (pe) pe.textContent = co+'/'+ct;
@@ -314,97 +527,64 @@ function fil(j, btn) {
   if (btn) btn.classList.add('on');
   var rows = document.querySelectorAll('.ir');
   for (var i=0;i<rows.length;i++) {
-    var rj = rows[i].getAttribute('data-jalon');
-    var rc = rows[i].getAttribute('data-cat');
+    var rj=rows[i].getAttribute('data-jalon'), rc=rows[i].getAttribute('data-cat');
     rows[i].style.display = (j==='ALL'||rj===j) && !CC[rc] ? '' : 'none';
   }
   var cats = document.querySelectorAll('.chr');
   for (var c=0;c<cats.length;c++) {
-    var cid = cats[c].getAttribute('data-cat');
-    var cr = document.querySelectorAll('.ir[data-cat="'+cid+'"]');
+    var cid=cats[c].getAttribute('data-cat');
+    var cr=document.querySelectorAll('.ir[data-cat="'+cid+'"]');
     var hv=false;
     for (var r=0;r<cr.length;r++) { if(j==='ALL'||cr[r].getAttribute('data-jalon')===j){hv=true;break;} }
-    cats[c].style.display = hv?'':'none';
+    cats[c].style.display=hv?'':'none';
   }
   updStats();
 }
 
 function toggleCat(tr) {
-  var cid = tr.getAttribute('data-cat');
-  CC[cid] = !CC[cid];
-  var rows = document.querySelectorAll('.ir[data-cat="'+cid+'"]');
+  var cid=tr.getAttribute('data-cat');
+  CC[cid]=!CC[cid];
+  var rows=document.querySelectorAll('.ir[data-cat="'+cid+'"]');
   for (var i=0;i<rows.length;i++) {
-    var rj = rows[i].getAttribute('data-jalon');
-    rows[i].style.display = !CC[cid] && (CJ==='ALL'||rj===CJ) ? '' : 'none';
+    var rj=rows[i].getAttribute('data-jalon');
+    rows[i].style.display=!CC[cid]&&(CJ==='ALL'||rj===CJ)?'':'none';
   }
   updStats();
 }
 
 function reiniciar() {
-  ST = {};
-  var rows = document.querySelectorAll('.ir');
-  for (var i=0;i<rows.length;i++) paint(rows[i].getAttribute('data-idx'));
-  document.getElementById('mr').classList.remove('on');
-  updStats();
-  toast('Checklist reiniciado');
+  if (!PROYECTO_ID) return;
+  supa('checklist_states?proyecto_id=eq.' + PROYECTO_ID, 'DELETE').then(function() {
+    ST={};
+    var rows=document.querySelectorAll('.ir');
+    for (var i=0;i<rows.length;i++) paint(rows[i].getAttribute('data-idx'));
+    document.getElementById('mr').classList.remove('on');
+    updStats(); toast('Checklist reiniciado');
+  });
 }
 
-function guardar() {
-  var data = {
-    proyecto: document.getElementById('ip').value,
-    instalacion: document.getElementById('ii').value,
-    fecha: document.getElementById('if').value,
-    ST: ST, PH: PH
-  };
-  var blob = new Blob([JSON.stringify(data)], {type:'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = (document.getElementById('ip').value||'checklist').replace(/[^a-zA-Z0-9]/g,'_') + '.json';
-  a.click();
-  toast('Datos guardados');
-}
-
-function cargar() {
-  var inp = document.createElement('input');
-  inp.type='file'; inp.accept='.json';
-  inp.onchange = function(e) {
-    var f = e.target.files[0]; if(!f) return;
-    var r = new FileReader();
-    r.onload = function(ev) {
-      try {
-        var d = JSON.parse(ev.target.result);
-        if (d.ST) { ST=d.ST; var ks=Object.keys(ST); for(var i=0;i<ks.length;i++) paint(ks[i]); }
-        if (d.PH) { PH=d.PH; updFotoBtns(); }
-        if (d.proyecto) document.getElementById('ip').value=d.proyecto;
-        if (d.instalacion) document.getElementById('ii').value=d.instalacion;
-        if (d.fecha) document.getElementById('if').value=d.fecha;
-        updStats();
-        toast('Datos cargados');
-      } catch(e){ toast('Error al cargar'); }
-    };
-    r.readAsText(f);
-  };
-  inp.click();
-}
-
+// ---- FOTOS ----
 function openFotos(catId, catName) {
-  curCat = catId;
-  document.getElementById('ft-title').textContent = 'Fotos - ' + catName;
+  curCat=catId;
+  document.getElementById('ft-title').textContent='Fotos - '+catName;
   renderFotos();
   document.getElementById('mf').classList.add('on');
 }
 
 function addFoto(inp) {
-  var files = inp.files; if(!files||!files.length) return;
+  var files=inp.files; if(!files||!files.length) return;
   if (!PH[curCat]) PH[curCat]=[];
-  var rem = files.length;
+  var rem=files.length;
   for (var i=0;i<files.length;i++) {
     (function(f){
       var r=new FileReader();
       r.onload=function(e){
-        PH[curCat].push({id: Date.now()+''+Math.random(), url: e.target.result});
-        rem--;
-        if(rem===0){renderFotos();updFotoBtns();toast('Foto anadida');}
+        supa('fotos','POST',{proyecto_id:PROYECTO_ID,categoria:curCat,nombre:f.name,data_url:e.target.result}).then(function(data){
+          var row=Array.isArray(data)?data[0]:data;
+          PH[curCat].push({id:row.id,url:row.data_url});
+          rem--;
+          if(rem===0){renderFotos();updFotoBtns();toast('Foto guardada');}
+        });
       };
       r.readAsDataURL(f);
     })(files[i]);
@@ -413,7 +593,7 @@ function addFoto(inp) {
 }
 
 function renderFotos() {
-  var g=document.getElementById('fg'), em=document.getElementById('fe');
+  var g=document.getElementById('fg'),em=document.getElementById('fe');
   g.innerHTML='';
   var list=PH[curCat]||[];
   em.style.display=list.length?'none':'block';
@@ -426,35 +606,35 @@ function renderFotos() {
 }
 
 function delFoto() {
-  if(!curCat||!curZoom) return;
-  PH[curCat]=(PH[curCat]||[]).filter(function(f){return f.id!==curZoom;});
-  document.getElementById('mz').classList.remove('on');
-  renderFotos(); updFotoBtns(); toast('Foto borrada');
+  if (!curCat||!curZoom) return;
+  supa('fotos?id=eq.'+curZoom,'DELETE').then(function(){
+    PH[curCat]=(PH[curCat]||[]).filter(function(f){return f.id!==curZoom;});
+    document.getElementById('mz').classList.remove('on');
+    renderFotos(); updFotoBtns(); toast('Foto borrada');
+  });
 }
 
 function updFotoBtns() {
-  var cats=Object.keys(PH);
   document.querySelectorAll('[id^="fb-"]').forEach(function(b){
-    b.textContent='Fotos'; b.style.color='#6b7a99'; b.style.borderColor='#2a3044';
+    b.textContent='Fotos';b.style.color='#6b7a99';b.style.borderColor='#2a3044';
   });
-  cats.forEach(function(c){
+  Object.keys(PH).forEach(function(c){
     var list=PH[c]; if(!list||!list.length) return;
     var b=document.getElementById('fb-'+c);
     if(b){b.textContent='Fotos('+list.length+')';b.style.color='#00c896';b.style.borderColor='#00c896';}
   });
 }
 
+// ---- EXPORT PDF ----
 function exportPDF() {
-  var n=document.getElementById('ip').value||'Sin nombre';
-  var inst=document.getElementById('ii').value;
-  var fecha=document.getElementById('if').value;
-  var ok=0,nok=0,na=0,p=0;
-  var vis=[];
+  var n=document.getElementById('h-nombre').textContent;
+  var ok=0,nok=0,na=0,p=0,vis=[];
   document.querySelectorAll('.ir').forEach(function(r){
     if(r.style.display!=='none'){
       vis.push(r);
       var s=ST[r.getAttribute('data-idx')];
-      if(s==='ok')ok++;else if(s==='nok')nok++;else if(s==='na')na++;else p++;
+      var sv=s?s.val:null;
+      if(sv==='ok')ok++;else if(sv==='nok')nok++;else if(sv==='na')na++;else p++;
     }
   });
   var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>';
@@ -467,7 +647,6 @@ function exportPDF() {
   h+='.bok{background:#dcfce7;color:#059669}.bnok{background:#fee2e2;color:#dc2626}.bna{background:#f3f4f6;color:#6b7280}.bp{background:#fef3c7;color:#d97706}';
   h+='</style></head><body>';
   h+='<h1>CHECK DE VALIDACION - '+n+'</h1>';
-  h+='<p style="color:#555;font-size:10px;margin-bottom:10px;">'+(inst?'Instalacion: '+inst+'  |  ':'')+' Fecha: '+fecha+'  |  Jalon: '+CJ+'</p>';
   h+='<div class="sum"><div><div class="sn" style="color:#059669">'+ok+'</div><div class="sl">OK</div></div>';
   h+='<div><div class="sn" style="color:#dc2626">'+nok+'</div><div class="sl">NOK</div></div>';
   h+='<div><div class="sn" style="color:#6b7280">'+na+'</div><div class="sl">N/A</div></div>';
@@ -481,11 +660,10 @@ function exportPDF() {
     var parts=key.split('|');
     var cat=parts[0],num=parts[1];
     if(cat!==lc){h+='<tr><td colspan="4" class="ch">'+cat+'</td></tr>';lc=cat;}
-    var s=ST[idx];
-    var badge=s==='ok'?'<span class="b bok">OK</span>':s==='nok'?'<span class="b bnok">NOK</span>':s==='na'?'<span class="b bna">N/A</span>':'<span class="b bp">-</span>';
+    var sv=ST[idx]?ST[idx].val:null;
+    var badge=sv==='ok'?'<span class="b bok">OK</span>':sv==='nok'?'<span class="b bnok">NOK</span>':sv==='na'?'<span class="b bna">N/A</span>':'<span class="b bp">-</span>';
     var desc=r.querySelectorAll('td')[1].querySelector('span').textContent;
-    var jalon=r.getAttribute('data-jalon');
-    h+='<tr><td>'+num+'</td><td>'+desc+'</td><td>'+jalon+'</td><td>'+badge+'</td></tr>';
+    h+='<tr><td>'+num+'</td><td>'+desc+'</td><td>'+r.getAttribute('data-jalon')+'</td><td>'+badge+'</td></tr>';
   });
   h+='</tbody></table></body></html>';
   var w=window.open('','_blank'); w.document.write(h); w.document.close(); setTimeout(function(){w.print();},400);
@@ -499,8 +677,9 @@ function toast(msg) {
 
 document.getElementById('mf').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
 document.getElementById('mz').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+document.getElementById('m-nuevo').addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
 
-updStats();
+initApp();
 </script>
 </body>
 </html>
