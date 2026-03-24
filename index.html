@@ -314,13 +314,16 @@ function supa(path, method, body) {
     headers: {
       'apikey': SKEY,
       'Authorization': 'Bearer ' + SKEY,
-      'Content-Type': 'application/json',
-      'Prefer': (method === 'POST') ? 'return=representation' : ''
+      'Content-Type': 'application/json'
     }
   };
+  if (method === 'POST') opts.headers['Prefer'] = 'return=representation';
   if (body) opts.body = JSON.stringify(body);
   return fetch(SURL + '/rest/v1/' + path, opts).then(function(r) {
-    if (r.status === 204 || r.status === 200 && r.headers.get('content-length') === '0') return [];
+    if (r.status === 204) return [];
+    if (!r.ok) {
+      return r.text().then(function(t) { console.error('Supabase error:', r.status, t); return []; });
+    }
     return r.json();
   });
 }
