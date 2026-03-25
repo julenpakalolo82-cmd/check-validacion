@@ -637,48 +637,87 @@ function updFotoBtns() {
 
 // ---- EXPORT PDF ----
 function exportPDF() {
-  var n=document.getElementById('h-nombre').textContent;
-  var ok=0,nok=0,na=0,p=0,vis=[];
-  document.querySelectorAll('.ir').forEach(function(r){
-    if(r.style.display!=='none'){
+  var n = document.getElementById('h-nombre').textContent;
+  var ok=0, nok=0, na=0, p=0, vis=[];
+  document.querySelectorAll('.ir').forEach(function(r) {
+    if (r.style.display !== 'none') {
       vis.push(r);
-      var s=ST[r.getAttribute('data-idx')];
-      var sv=s?s.val:null;
-      if(sv==='ok')ok++;else if(sv==='nok')nok++;else if(sv==='na')na++;else p++;
+      var s = ST[r.getAttribute('data-idx')];
+      var sv = s ? s.val : null;
+      if (sv==='ok') ok++; else if (sv==='nok') nok++; else if (sv==='na') na++; else p++;
     }
   });
-  var h='<!DOCTYPE html><html><head><meta charset="UTF-8"><style>';
-  h+='body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:15px}';
-  h+='h1{font-size:16px;margin-bottom:8px}.sum{display:flex;gap:16px;padding:8px;background:#f5f5f5;border-radius:4px;margin-bottom:14px}';
-  h+='.sn{font-size:16px;font-weight:bold}.sl{font-size:9px;color:#777}';
-  h+='table{width:100%;border-collapse:collapse}th{background:#1e2330;color:#fff;padding:5px 8px;text-align:left;font-size:10px}';
-  h+='td{padding:4px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;vertical-align:top}';
-  h+='.ch{background:#e5e7eb;font-weight:bold}.b{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:bold}';
-  h+='.bok{background:#dcfce7;color:#059669}.bnok{background:#fee2e2;color:#dc2626}.bna{background:#f3f4f6;color:#6b7280}.bp{background:#fef3c7;color:#d97706}';
-  h+='</style></head><body>';
-  h+='<h1>CHECK DE VALIDACION - '+n+'</h1>';
-  h+='<div class="sum"><div><div class="sn" style="color:#059669">'+ok+'</div><div class="sl">OK</div></div>';
-  h+='<div><div class="sn" style="color:#dc2626">'+nok+'</div><div class="sl">NOK</div></div>';
-  h+='<div><div class="sn" style="color:#6b7280">'+na+'</div><div class="sl">N/A</div></div>';
-  h+='<div><div class="sn" style="color:#d97706">'+p+'</div><div class="sl">Pendiente</div></div>';
-  h+='<div><div class="sn">'+(vis.length?Math.round(ok/vis.length*100):0)+'%</div><div class="sl">Completado</div></div></div>';
-  h+='<table><thead><tr><th>N</th><th>Descripcion</th><th>Jalon</th><th>Estado</th></tr></thead><tbody>';
-  var lc='';
-  vis.forEach(function(r){
-    var idx=r.getAttribute('data-idx');
-    var key=IDX[idx]||'';
-    var parts=key.split('|');
-    var cat=parts[0],num=parts[1];
-    if(cat!==lc){h+='<tr><td colspan="4" class="ch">'+cat+'</td></tr>';lc=cat;}
-    var sv=ST[idx]?ST[idx].val:null;
-    var badge=sv==='ok'?'<span class="b bok">OK</span>':sv==='nok'?'<span class="b bnok">NOK</span>':sv==='na'?'<span class="b bna">N/A</span>':'<span class="b bp">-</span>';
-    var desc=r.querySelectorAll('td')[1].querySelector('span').textContent;
-    h+='<tr><td>'+num+'</td><td>'+desc+'</td><td>'+r.getAttribute('data-jalon')+'</td><td>'+badge+'</td></tr>';
-  });
-  h+='</tbody></table></body></html>';
-  var w=window.open('','_blank'); w.document.write(h); w.document.close(); setTimeout(function(){w.print();},400);
-}
 
+  var h = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>';
+  h += 'body{font-family:Arial,sans-serif;font-size:11px;color:#111;margin:15px}';
+  h += 'h1{font-size:16px;margin-bottom:8px}';
+  h += '.sum{display:flex;gap:16px;padding:8px;background:#f5f5f5;border-radius:4px;margin-bottom:14px}';
+  h += '.sn{font-size:16px;font-weight:bold}.sl{font-size:9px;color:#777}';
+  h += 'table{width:100%;border-collapse:collapse;margin-bottom:20px}';
+  h += 'th{background:#1e2330;color:#fff;padding:5px 8px;text-align:left;font-size:10px}';
+  h += 'td{padding:4px 8px;border-bottom:1px solid #e5e7eb;font-size:10px;vertical-align:top}';
+  h += '.ch{background:#e5e7eb;font-weight:bold}';
+  h += '.b{display:inline-block;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:bold}';
+  h += '.bok{background:#dcfce7;color:#059669}.bnok{background:#fee2e2;color:#dc2626}';
+  h += '.bna{background:#f3f4f6;color:#6b7280}.bp{background:#fef3c7;color:#d97706}';
+  h += '.foto-sec{margin-bottom:24px}';
+  h += '.foto-sec h3{font-size:13px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #1e2330}';
+  h += '.foto-grid{display:flex;flex-wrap:wrap;gap:8px}';
+  h += '.foto-grid img{width:200px;height:150px;object-fit:cover;border-radius:4px;border:1px solid #ddd}';
+  h += '@media print{.foto-grid img{width:180px;height:135px}}';
+  h += '</style></head><body>';
+  h += '<h1>CHECK DE VALIDACION - ' + n + '</h1>';
+  h += '<div class="sum">';
+  h += '<div><div class="sn" style="color:#059669">' + ok + '</div><div class="sl">OK</div></div>';
+  h += '<div><div class="sn" style="color:#dc2626">' + nok + '</div><div class="sl">NOK</div></div>';
+  h += '<div><div class="sn" style="color:#6b7280">' + na + '</div><div class="sl">N/A</div></div>';
+  h += '<div><div class="sn" style="color:#d97706">' + p + '</div><div class="sl">Pendiente</div></div>';
+  h += '<div><div class="sn">' + (vis.length ? Math.round(ok/vis.length*100) : 0) + '%</div><div class="sl">Completado</div></div>';
+  h += '</div>';
+
+  // Checklist table
+  h += '<table><thead><tr><th>N</th><th>Descripcion</th><th>Jalon</th><th>Estado</th></tr></thead><tbody>';
+  var lc = '';
+  vis.forEach(function(r) {
+    var idx = r.getAttribute('data-idx');
+    var key = IDX[idx] || '';
+    var parts = key.split('|');
+    var cat = parts[0], num = parts[1];
+    if (cat !== lc) { h += '<tr><td colspan="4" class="ch">' + cat + '</td></tr>'; lc = cat; }
+    var sv = ST[idx] ? ST[idx].val : null;
+    var badge = sv==='ok' ? '<span class="b bok">OK</span>'
+      : sv==='nok' ? '<span class="b bnok">NOK</span>'
+      : sv==='na' ? '<span class="b bna">N/A</span>'
+      : '<span class="b bp">-</span>';
+    var desc = r.querySelectorAll('td')[1].querySelector('span').textContent;
+    h += '<tr><td>' + num + '</td><td>' + desc + '</td><td>' + r.getAttribute('data-jalon') + '</td><td>' + badge + '</td></tr>';
+  });
+  h += '</tbody></table>';
+
+  // Photos section - grouped by category
+  var catKeysWithPhotos = Object.keys(PH).filter(function(c) { return PH[c] && PH[c].length > 0; });
+  if (catKeysWithPhotos.length > 0) {
+    h += '<h2 style="font-size:14px;margin-bottom:12px;margin-top:8px;border-top:2px solid #1e2330;padding-top:12px;">FOTOS POR SECCION</h2>';
+    catKeysWithPhotos.forEach(function(catId) {
+      var list = PH[catId];
+      var catName = catId.replace(/-/g, ' ');
+      h += '<div class="foto-sec">';
+      h += '<h3>' + catName + ' (' + list.length + ' foto' + (list.length > 1 ? 's' : '') + ')</h3>';
+      h += '<div class="foto-grid">';
+      list.forEach(function(f) {
+        h += '<img src="' + f.url + '" alt="foto">';
+      });
+      h += '</div></div>';
+    });
+  }
+
+  h += '</body></html>';
+
+  var w = window.open('', '_blank');
+  w.document.write(h);
+  w.document.close();
+  setTimeout(function() { w.print(); }, 600);
+}
 function toast(msg) {
   var t=document.getElementById('toast');
   t.textContent=msg; t.classList.add('on');
